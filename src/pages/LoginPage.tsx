@@ -1,9 +1,10 @@
 import React from 'react';
 import {ToastAndroid, View} from 'react-native';
-import {Button, Card, List, Text, TextInput} from 'react-native-paper';
+import {Button, Text, TextInput} from 'react-native-paper';
 import createClient from "openapi-fetch";
 import * as openapi from '../Interfaces/openapi'
-import {getGlobalState, setGlobalState, setGlobalStateToken, setGlobalStateUserInfo} from '../GlobalState'
+import {getGlobalState} from '../GlobalState'
+import storage from "../utils/storage.ts";
 const client = createClient<openapi.paths>()
 export function LoginPage() {
     const [loginInfo, setLoginInfo] = React.useState({
@@ -22,13 +23,22 @@ export function LoginPage() {
         })
             if (response.response.status === 200 && response.data!==undefined) {
                 if(response.data.data !== undefined) {
-                    setGlobalStateToken(response.data.data.token)
-                    setGlobalStateUserInfo({
-                        id: response.data.data.id,
-                        email: response.data.data.emailAddress,
-                        name: response.data.data.username,
+
+                    await storage.save({
+                        key: "loginState",
+                        data: {
+                            // @ts-ignore
+                            token: response.data.data.token,
+                            // @ts-ignore
+                            id: response.data.data.id,
+                            // @ts-ignore
+                            email: response.data.data.emailAddress,
+                            // @ts-ignore
+                            name: response.data.data.username,
+                        }
                     })
                 }
+
                 ToastAndroid.showWithGravity("Login successfully", 1000,1);
             } else {
                 ToastAndroid.showWithGravity("Login failed", 1000,1);
