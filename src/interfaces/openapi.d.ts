@@ -27,11 +27,14 @@ export interface paths {
   "/api/user/login": {
     post: operations["login"];
   };
-  "/api/video/download/": {
+  "/api/video/download/**": {
     get: operations["download"];
   };
   "/api/video/": {
     get: operations["getAllVideo"];
+  };
+  "/api/user/{id}": {
+    get: operations["getUserById"];
   };
 }
 
@@ -203,11 +206,6 @@ export interface operations {
     };
   };
   download: {
-    parameters: {
-      query: {
-        url: string;
-      };
-    };
     responses: {
       /** @description OK */
       200: {
@@ -221,6 +219,21 @@ export interface operations {
       200: {
         content: {
           "*/*": components["schemas"]["ResponseDTOListVideo"];
+        };
+      };
+    };
+  };
+  getUserById: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          "*/*": components["schemas"]["ResponseDTOUserDTO"];
         };
       };
     };

@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {Image, ScrollView, ToastAndroid, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {Card, Text} from 'react-native-paper';
 import createClient from "openapi-fetch";
 import * as openapi from '../Interfaces/openapi'
 import {VideoINTF} from "../interfaces/VideoINTF.ts";
 import {getGlobalState} from "../GlobalState.ts";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import {VideoPlayer} from "../components/VideoPlayer.tsx";
 
 const client = createClient<openapi.paths>()
 
-export function HomePage() {
+// @ts-ignore
+export function VideoListPage({navigation}) {
 
     const [videoList, setVideoList] = useState<VideoINTF[]>([])
 
@@ -27,16 +27,22 @@ export function HomePage() {
         }
 
         getVideoList().then(() => {
-            console.log(videoList)
-            console.log(getGlobalState().server + '/image/' + '1/1.jpg')
+            // console.log(videoList)
+            // console.log(getGlobalState().server + '/image/' + '1/1.jpg')
         })
     }, []);
+
+    const handleCardPress = (videoInfo: VideoINTF) => {
+        console.log(videoInfo)
+        navigation.navigate('Video', {videoInfo})
+    }
+
     return (
         <View style={{"height": "100%"}}>
-            {/*<VideoPlayer videoUrl={'2/2.m3u8'}/>*/}
             <ScrollView style={{"height": "100%"}} contentContainerStyle={{alignItems: "center"}}>
                 {videoList.map((video, index) => (
                     <Card key={index}
+                          onPress={() => handleCardPress(video)}
                           style={{
                               width: "90%",
                               height: "auto",
@@ -44,7 +50,7 @@ export function HomePage() {
                               marginBottom: 10
                           }}>
 
-                        <Card.Cover source={{uri: getGlobalState().server + '/image/' + video.coverUrl}}/>
+                        <Card.Cover source={{uri: getGlobalState().server + '/image/' + video.coverUrl}} style={{borderBottomLeftRadius : 0,borderBottomRightRadius : 0,borderRadius : 10}}/>
                         <Card.Content style={{padding: 5, width: "100%", flexDirection: 'column'}}>
                             <View style={{overflow: 'hidden', width: '100%', marginTop: 5, marginBottom: 5}}>
                                 <Text variant="titleMedium">{video.title}</Text>
@@ -70,4 +76,4 @@ export function HomePage() {
 }
 
 
-export default HomePage;
+export default VideoListPage;
