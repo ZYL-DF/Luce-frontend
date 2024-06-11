@@ -1,5 +1,5 @@
 const _globalState: GlobalState = {
-    server: "http://10.29.20.89:8080",
+    server: "http://47.115.214.246:4060",
 }
 
 export interface GlobalState {

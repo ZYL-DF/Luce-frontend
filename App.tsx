@@ -9,6 +9,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import VideoPage from "./src/pages/VideoPage.tsx";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import storage from "./src/utils/storage.ts";
+import RegisterPage from "./src/pages/RegisterPage.tsx";
+import UploadPage from "./src/pages/UploadPage.tsx";
 
 
 function App(): React.JSX.Element {
@@ -28,11 +30,11 @@ function App(): React.JSX.Element {
 
     function HomeScreen() {
         return (
-            <Stack.Navigator screenOptions={{headerShown: false}}>
-                <Stack.Screen name="VideoList" component={VideoListScreen}
-                              options={{animation: 'slide_from_left', orientation: 'portrait'}}/>
-                <Stack.Screen name="Video" component={VideoScreen} options={{animation: 'slide_from_right'}}/>
-            </Stack.Navigator>
+            <VideoStack.Navigator screenOptions={{headerShown: false}}>
+                <VideoStack.Screen name="VideoList" component={VideoListScreen}
+                                   options={{animation: 'slide_from_left', orientation: 'portrait'}}/>
+                <VideoStack.Screen name="Video" component={VideoScreen} options={{animation: 'slide_from_right'}}/>
+            </VideoStack.Navigator>
 
         );
     }
@@ -46,15 +48,43 @@ function App(): React.JSX.Element {
 
     function ProfileScreen() {
         return (
-            <ProfilePage setIsSignedIn={setIsSignedIn}/>
+            <VideoStack.Navigator screenOptions={{headerShown: false}}>
+                <VideoStack.Screen name="UserInfo" component={UserInfoScreen}
+                                   options={{animation: 'slide_from_left', orientation: 'portrait'}}/>
+                <VideoStack.Screen name="Upload" component={UploadScreen} options={{animation: 'slide_from_right'}}/>
+            </VideoStack.Navigator>
+
         );
     }
 
-    function LoginScreen() {
+    // @ts-ignore
+    function UserInfoScreen({navigation}) {
         return (
-            <LoginPage setIsSignedIn={setIsSignedIn}/>
+            <ProfilePage setIsSignedIn={setIsSignedIn} navigation={navigation}/>
+        );
+    }
+
+    // @ts-ignore
+    function UploadScreen({navigation}) {
+        return (
+            <UploadPage navigation={navigation}/>
+        );
+    }
+
+    // @ts-ignore
+    function LoginScreen({navigation}) {
+        return (
+            <LoginPage setIsSignedIn={setIsSignedIn} navigation={navigation}/>
         )
     }
+
+    // @ts-ignore
+    function RegisterScreen({navigation}) {
+        return (
+            <RegisterPage navigation={navigation}/>
+        )
+    }
+
     // @ts-ignore
     function VideoScreen({route}) {
         const {videoInfo} = route.params;
@@ -76,7 +106,8 @@ function App(): React.JSX.Element {
 
 
     const AuthStack = createNativeStackNavigator();
-    const Stack = createNativeStackNavigator();
+    const VideoStack = createNativeStackNavigator();
+    const ProfileStack = createNativeStackNavigator();
     const Tab = createBottomTabNavigator();
 
     const BottomTabNavigator = () => {
@@ -112,8 +143,13 @@ function App(): React.JSX.Element {
                         isSignedIn
                             ? <AuthStack.Screen name="BottomNavigation" component={BottomTabNavigator}
                                                 options={{animation: 'fade'}}/>
-                            : <AuthStack.Screen name="AuthScreen" component={LoginScreen}
-                                                options={{animation: 'fade'}}/>
+                            : (<>
+                                    <AuthStack.Screen name="LoginScreen" component={LoginScreen}
+                                                      options={{animation: 'fade'}}/>
+                                    <AuthStack.Screen name="RegisterScreen" component={RegisterScreen}
+                                                      options={{animation: 'fade'}}/>
+                                </>
+                            )
                     }
                 </AuthStack.Navigator>
             </NavigationContainer>

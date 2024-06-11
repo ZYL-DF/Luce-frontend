@@ -7,11 +7,12 @@ import {SegmentedButtons, ToggleButton} from "react-native-paper";
 import {useEffect, useState} from "react";
 import {VideoInfo} from "../components/VideoInfo.tsx";
 import {VideoCommentShower} from "../components/VideoCommentShower.tsx";
+import {useFocusEffect} from "@react-navigation/native";
 
 const client = createClient<openapi.paths>()
 
 export function VideoPage(props: VideoINTF) {
-    const {
+    let {
         id,
         url,
         coverUrl,
@@ -29,8 +30,6 @@ export function VideoPage(props: VideoINTF) {
     useEffect(() => {
         setVideoHeight(Dimensions.get('window').width * (9 / 16),)
     }, [videoHeight]);
-
-
 
     return (
         <View style={{width: "100%", height: "100%"}}>
@@ -65,8 +64,7 @@ export function VideoPage(props: VideoINTF) {
                                    uploadDate={uploadDate}
                                    uploadUserId={uploadUserId}
                                    length={length}/>
-                        : <VideoCommentShower></VideoCommentShower>
-
+                        : <VideoCommentShower videoId={id}/>
                 }
             </View>
         </View>

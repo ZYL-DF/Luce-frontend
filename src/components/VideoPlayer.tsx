@@ -21,10 +21,10 @@ export const VideoPlayer = ({videoUrl, setVideoHeight}: {
 
     useEffect(() => {
         Orientation.addDeviceOrientationListener((orientation) => {
-            console.log(orientation);
+
 
             Orientation.getAutoRotateState(state => {
-                console.log(state);
+
                 if (state) {
                     if (videoRef.current) {
                         if (orientation === 'PORTRAIT') {

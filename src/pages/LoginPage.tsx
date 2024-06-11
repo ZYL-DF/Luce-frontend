@@ -1,5 +1,5 @@
 import React from 'react';
-import {ToastAndroid, View} from 'react-native';
+import {KeyboardAvoidingView, ToastAndroid, View} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import createClient from "openapi-fetch";
 import * as openapi from '../Interfaces/openapi'
@@ -8,7 +8,11 @@ import storage from "../utils/storage.ts";
 
 const client = createClient<openapi.paths>()
 
-export function LoginPage({setIsSignedIn}: { setIsSignedIn: React.Dispatch<React.SetStateAction<boolean>> }) {
+// @ts-ignore
+export function LoginPage({setIsSignedIn, navigation}: {
+    setIsSignedIn: React.Dispatch<React.SetStateAction<boolean>>,
+    navigation: any
+}) {
     const [loginInfo, setLoginInfo] = React.useState({
         emailAddress: "",
         password: "",
@@ -49,15 +53,15 @@ export function LoginPage({setIsSignedIn}: { setIsSignedIn: React.Dispatch<React
     }
 
     return (
-        <View style={{"height": "100%"}}>
+        <KeyboardAvoidingView style={{"height": "100%"}} behavior={'padding'}>
             <View style={{"height": "100%", alignItems: "center", justifyContent: "center"}}>
                 <View style={{height: "10%"}}/>
-                <View style={{top: "10%", height: "20%", alignItems: "center"}}>
+                <View style={{position: 'absolute',top: "20%", height: "20%", alignItems: "center"}}>
                     <Text variant={"displayMedium"}>
-                        Login
+                        Luce
                     </Text>
                 </View>
-                <View style={{top: "30%", height: "70%", width: "100%", alignItems: "center"}}>
+                <View style={{top: "30%", height: "60%", width: "100%", alignItems: "center"}}>
                     <TextInput label="emailAddress"
                                value={loginInfo.emailAddress}
                                onChangeText={text => setLoginInfo({
@@ -82,11 +86,19 @@ export function LoginPage({setIsSignedIn}: { setIsSignedIn: React.Dispatch<React
                             mode={'contained'}
                             disabled={loginInfo.password === "" || loginInfo.emailAddress === ""}
                             style={{"width": "60%", margin: 30}}>
-                        login
+                        登录
+                    </Button>
+
+                    <Button onPress={() => {
+                        navigation.navigate("RegisterScreen")
+                    }}
+                            mode={'text'}
+                            style={{"width": "60%", margin: 30}}>
+                        没有账号,去注册
                     </Button>
                 </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 

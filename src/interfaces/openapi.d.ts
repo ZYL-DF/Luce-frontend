@@ -18,8 +18,14 @@ export interface paths {
   "/api/video/saveAsM3u8/**": {
     post: operations["upload"];
   };
+  "/api/video/play/{id}": {
+    post: operations["playVideo"];
+  };
   "/api/video/generateM3u8File/**": {
     post: operations["preview"];
+  };
+  "/api/video/comment": {
+    post: operations["addComment"];
   };
   "/api/user/register": {
     post: operations["register"];
@@ -29,6 +35,9 @@ export interface paths {
   };
   "/api/video/download/**": {
     get: operations["download"];
+  };
+  "/api/video/comments/{videoId}": {
+    get: operations["getComments"];
   };
   "/api/video/": {
     get: operations["getAllVideo"];
@@ -63,6 +72,47 @@ export interface components {
       message?: string;
       data?: string;
     };
+    ResponseDTOVideo: {
+      message?: string;
+      data?: components["schemas"]["Video"];
+    };
+    Video: {
+      /** Format: int32 */
+      id?: number;
+      url?: string;
+      coverUrl?: string;
+      title?: string;
+      detail?: string;
+      /** Format: int32 */
+      playTimes?: number;
+      /** Format: date-time */
+      uploadDate?: string;
+      /** Format: int32 */
+      uploadUserId?: number;
+      /** Format: date-time */
+      length?: string;
+    };
+    CommentDTO: {
+      /** Format: int32 */
+      videoId?: number;
+      /** Format: int32 */
+      userId?: number;
+      comment?: string;
+    };
+    CommentResponseDTO: {
+      /** Format: int32 */
+      id?: number;
+      comment?: string;
+      /** Format: int32 */
+      userId?: number;
+      userName?: string;
+      /** Format: date-time */
+      date?: string;
+    };
+    ResponseDTOListCommentResponseDTO: {
+      message?: string;
+      data?: components["schemas"]["CommentResponseDTO"][];
+    };
     UserLoginDTO: {
       emailAddress?: string;
       password?: string;
@@ -81,22 +131,6 @@ export interface components {
     ResponseDTOListVideo: {
       message?: string;
       data?: components["schemas"]["Video"][];
-    };
-    Video: {
-      /** Format: int32 */
-      id?: number;
-      url?: string;
-      coverUrl?: string;
-      title?: string;
-      detail?: string;
-      /** Format: int32 */
-      playTimes?: number;
-      /** Format: date-time */
-      uploadDate?: string;
-      /** Format: int32 */
-      uploadUserId?: number;
-      /** Format: date-time */
-      length?: string;
     };
     ResponseDTOListUserDTO: {
       message?: string;
@@ -167,11 +201,41 @@ export interface operations {
       };
     };
   };
+  playVideo: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          "*/*": components["schemas"]["ResponseDTOVideo"];
+        };
+      };
+    };
+  };
   preview: {
     responses: {
       /** @description OK */
       200: {
         content: never;
+      };
+    };
+  };
+  addComment: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CommentDTO"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          "*/*": components["schemas"]["ResponseDTOListCommentResponseDTO"];
+        };
       };
     };
   };
@@ -210,6 +274,21 @@ export interface operations {
       /** @description OK */
       200: {
         content: never;
+      };
+    };
+  };
+  getComments: {
+    parameters: {
+      path: {
+        videoId: number;
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        content: {
+          "*/*": components["schemas"]["ResponseDTOListCommentResponseDTO"];
+        };
       };
     };
   };

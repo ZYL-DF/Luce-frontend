@@ -6,6 +6,7 @@ import * as openapi from '../Interfaces/openapi'
 import {VideoINTF} from "../interfaces/VideoINTF.ts";
 import {getGlobalState} from "../GlobalState.ts";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import {useFocusEffect} from "@react-navigation/native";
 
 const client = createClient<openapi.paths>()
 
@@ -14,7 +15,7 @@ export function VideoListPage({navigation}) {
 
     const [videoList, setVideoList] = useState<VideoINTF[]>([])
 
-    useEffect(() => {
+    useFocusEffect(React.useCallback(() => {
         const getVideoList = async () => {
             // @ts-ignore
             const responses = await client.GET(getGlobalState().server + '/api/video/')
@@ -26,15 +27,27 @@ export function VideoListPage({navigation}) {
             }
         }
 
-        getVideoList().then(() => {
-            // console.log(videoList)
-            // console.log(getGlobalState().server + '/image/' + '1/1.jpg')
-        })
-    }, []);
+        getVideoList()
+    }, []));
 
-    const handleCardPress = (videoInfo: VideoINTF) => {
-        console.log(videoInfo)
-        navigation.navigate('Video', {videoInfo})
+    const handleCardPress = async (videoInfo: VideoINTF) => {
+        // @ts-ignore
+        const responses = await client.POST(getGlobalState().server + '/api/video/play/{id}', {
+            params: {
+                path: {
+                    id: videoInfo.id
+                }
+            }
+        })
+        if (responses.response.status === 200) {
+            if (responses.data !== undefined && responses.data.data !== undefined) {
+                // @ts-ignore
+                // console.log(responses.data.data.playTimes)
+                videoInfo.playTimes = responses.data.data.playTimes;
+                navigation.navigate('Video', {videoInfo})
+            }
+        }
+
     }
 
     return (
@@ -50,7 +63,8 @@ export function VideoListPage({navigation}) {
                               marginBottom: 10
                           }}>
 
-                        <Card.Cover source={{uri: getGlobalState().server + '/image/' + video.coverUrl}} style={{borderBottomLeftRadius : 0,borderBottomRightRadius : 0,borderRadius : 10}}/>
+                        <Card.Cover source={{uri: getGlobalState().server + '/image/' + video.coverUrl}}
+                                    style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderRadius: 10}}/>
                         <Card.Content style={{padding: 5, width: "100%", flexDirection: 'column'}}>
                             <View style={{overflow: 'hidden', width: '100%', marginTop: 5, marginBottom: 5}}>
                                 <Text variant="titleMedium">{video.title}</Text>

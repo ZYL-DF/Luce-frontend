@@ -7,7 +7,10 @@ import storage from "../utils/storage.ts";
 
 const client = createClient<openapi.paths>()
 
-export function ProfilePage({setIsSignedIn}: { setIsSignedIn: React.Dispatch<React.SetStateAction<boolean>> }) {
+export function ProfilePage({setIsSignedIn, navigation}: {
+    setIsSignedIn: React.Dispatch<React.SetStateAction<boolean>>,
+    navigation: any
+}) {
     const [userInfo, setUserInfo] = useState({
         id: 0,
         // @ts-ignore
@@ -56,9 +59,13 @@ export function ProfilePage({setIsSignedIn}: { setIsSignedIn: React.Dispatch<Rea
                 <Text variant={'labelMedium'} style={{top: "10%", height: "10%"}}>
                     {userInfo.email}
                 </Text>
+                <Button mode={'contained'} style={{position: 'absolute', bottom: "20%", width: '30%'}}
+                        onPress={()=>{navigation.navigate("Upload")}}>
+                    上传视频
+                </Button>
                 <Button mode={'contained'} style={{position: 'absolute', bottom: "10%", width: '30%'}}
                         onPress={handleLogOut}>
-                    Log out
+                    登出
                 </Button>
             </View>
         </View>
